@@ -1,4 +1,4 @@
-package com.kpsec.test.infra;
+package account.infra;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

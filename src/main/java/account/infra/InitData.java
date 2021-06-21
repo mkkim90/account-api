@@ -1,4 +1,4 @@
-package com.kpsec.test.infra;
+package account.infra;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -8,13 +8,13 @@ import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
+import account.repository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
-import com.kpsec.test.model.entity.Account;
-import com.kpsec.test.repository.AccountRepository;
+import account.model.entity.Account;
 
 @Component
 public class InitData {

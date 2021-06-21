@@ -1,13 +1,12 @@
-package com.kpsec.test.service;
+package account.service;
 
 import java.util.List;
 
+import account.model.AccountResult;
+import account.repository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.kpsec.test.model.AccountResult;
-import com.kpsec.test.repository.AccountRepository;
 
 @Service
 @Transactional

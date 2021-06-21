@@ -1,4 +1,4 @@
-package com.kpsec.test.model.entity;
+package account.model.entity;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;

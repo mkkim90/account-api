@@ -1,4 +1,4 @@
-package com.kpsec.test.model;
+package account.model;
 
 public interface AccountResult {
     String getAccountNo();

@@ -1,4 +1,4 @@
-package com.kpsec.test.repository;
+package account.repository;
 
 import java.util.List;
 
@@ -6,8 +6,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.kpsec.test.model.AccountResult;
-import com.kpsec.test.model.entity.Account;
+import account.model.AccountResult;
+import account.model.entity.Account;
 
 public interface AccountRepository extends JpaRepository<Account, String> {
 
