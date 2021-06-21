@@ -28,7 +28,7 @@ public class SwaggerConfig implements WebMvcConfigurer {
 
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("KPSEC - 과제 평가")
+                .title("계좌 정보 API")
                 .build();
     }
 
@@ -37,7 +37,7 @@ public class SwaggerConfig implements WebMvcConfigurer {
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(this.apiInfo())
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.kpsec.test.contoller"))
+                .apis(RequestHandlerSelectors.basePackage("account.contoller"))
                 .paths(PathSelectors.any())
                 .build();
     }
