@@ -2,6 +2,7 @@ package account.infra;
 
 import account.model.entity.Account;
 import account.model.entity.AccountHistory;
+import account.model.entity.BranchCode;
 import account.repository.AccountHistoryRepository;
 import account.repository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,28 +33,25 @@ public class InitData {
     }
 
     private void initAccountHistory() throws IOException {
-        if (accountHistoryRepository.count() == 0) {
-            Resource resource = new ClassPathResource("거래내역.csv");
-            List<AccountHistory> accountHistories = Files.readAllLines(resource.getFile().toPath(), StandardCharsets.UTF_8)
-                    .stream().skip(1).map(line -> {
-                        String[] split = line.split(",");
-                        return AccountHistory.buildByUploadCsvFile(split);
-                    }).collect(Collectors.toList());
-           accountHistoryRepository.saveAll(accountHistories);
-        }
+        Resource resource = new ClassPathResource("거래내역.csv");
+        List<AccountHistory> accountHistories = Files.readAllLines(resource.getFile().toPath(), StandardCharsets.UTF_8)
+                .stream().skip(1).map(line -> {
+                    String[] split = line.split(",");
+                    return AccountHistory.buildByUploadCsvFile(split);
+                }).collect(Collectors.toList());
+        accountHistoryRepository.saveAll(accountHistories);
+
     }
 
     private void initAccount() throws IOException {
-        if (accountRepository.count() == 0) {
-            Resource resource = new ClassPathResource("계좌정보.csv");
-            List<Account> accountList = Files.readAllLines(resource.getFile().toPath(), StandardCharsets.UTF_8)
-                    .stream().skip(1).map(line -> {
-                        String[] split = line.split(",");
-                        return Account.builder().accountNo(split[0]).accountName(split[1]).branchCode(split[2])
-                                .build();
-                    }).collect(Collectors.toList());
-            accountRepository.saveAll(accountList);
-        }
+        Resource resource = new ClassPathResource("계좌정보.csv");
+        List<Account> accountList = Files.readAllLines(resource.getFile().toPath(), StandardCharsets.UTF_8)
+                .stream().skip(1).map(line -> {
+                    String[] split = line.split(",");
+                    return Account.builder().no(Long.parseLong(split[0])).name(split[1]).branchCode(BranchCode.of(split[2]))
+                            .build();
+                }).collect(Collectors.toList());
+        accountRepository.saveAll(accountList);
     }
 
 }
