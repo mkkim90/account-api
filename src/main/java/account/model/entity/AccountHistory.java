@@ -47,14 +47,12 @@ public class AccountHistory {
     }
 
     private AccountHistory(String[] accountHistories) {
-        AccountHistory.builder()
-                .transactionDate(convertLocalDate(accountHistories[0]))
-                .accountNo(convertLong(accountHistories[1]))
-                .transactionNo(convertLong(accountHistories[2]))
-                .price(convertLong(accountHistories[3]))
-                .fee(convertLong(accountHistories[4]))
-                .cancelStatus(convertCancelStatus(accountHistories[5]))
-                .build();
+        this.transactionDate = convertLocalDate(accountHistories[0]);
+        this.accountNo = convertLong(accountHistories[1]);
+        this.transactionNo = convertLong(accountHistories[2]);
+        this.price = convertLong(accountHistories[3]);
+        this.fee = convertLong(accountHistories[4]);
+        this.cancelStatus = convertCancelStatus(accountHistories[5]);
     }
 
     private LocalDate convertLocalDate(String accountHistory) {
