@@ -1,4 +1,4 @@
-package account.model;
+package account.model.entity;
 
 import lombok.Builder;
 
@@ -28,11 +28,12 @@ public class AccountHistory {
     @Column(nullable = false)
     private long fee;
 
-    @Column(nullable = false)
-    private char cancelStatus;
+    @Column(columnDefinition = "ENUM('Y', 'N')")
+    @Enumerated(EnumType.STRING)
+    private CancelStatus cancelStatus = CancelStatus.N;
 
     @Builder
-    private AccountHistory(LocalDate transactionDate, Long accountNo, Long transactionNo, long price, long fee, char cancelStatus) {
+    private AccountHistory(LocalDate transactionDate, Long accountNo, Long transactionNo, long price, long fee, CancelStatus cancelStatus) {
         this.transactionDate = transactionDate;
         this.accountNo = accountNo;
         this.transactionNo = transactionNo;
@@ -42,7 +43,11 @@ public class AccountHistory {
     }
 
     public static AccountHistory buildByUploadCsvFile(String[] accountHistories) {
-        return AccountHistory.builder()
+        return new AccountHistory(accountHistories);
+    }
+
+    private AccountHistory(String[] accountHistories) {
+        AccountHistory.builder()
                 .transactionDate(convertLocalDate(accountHistories[0]))
                 .accountNo(convertLong(accountHistories[1]))
                 .transactionNo(convertLong(accountHistories[2]))
@@ -52,7 +57,7 @@ public class AccountHistory {
                 .build();
     }
 
-    private static LocalDate convertLocalDate(String accountHistory) {
+    private LocalDate convertLocalDate(String accountHistory) {
         try {
             return LocalDate.parse(accountHistory, DateTimeFormatter.ofPattern("yyyyMMdd"));
         } catch (DateTimeParseException | NullPointerException e) {
@@ -60,7 +65,7 @@ public class AccountHistory {
         }
     }
 
-    private static Long convertLong(String target) {
+    private Long convertLong(String target) {
         try {
             return Long.parseLong(target);
         } catch (NumberFormatException e) {
@@ -68,19 +73,19 @@ public class AccountHistory {
         }
     }
 
-    private static char convertCancelStatus(String target) {
+    private CancelStatus convertCancelStatus(String target) {
         checkNotNull(target);
         validateConvertCancelStatus(target);
-        return target.charAt(0);
+        return CancelStatus.valueOf(target.charAt(0));
     }
 
-    private static void validateConvertCancelStatus(String target) {
+    private void validateConvertCancelStatus(String target) {
         if (target.length() != 1) {
-            throw new IllegalArgumentException("취소 여부 값은 Y 또는 N 입니다.");
+            throw new IllegalArgumentException("취소 여부 길이는 한자리 수입니다.");
         }
     }
 
-    private static void checkNotNull(String target) {
+    private void checkNotNull(String target) {
         if (target == null || target.isEmpty()) {
             throw new IllegalArgumentException("필수 값 누락입니다.");
         }
