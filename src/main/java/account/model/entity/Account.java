@@ -1,9 +1,6 @@
 package account.model.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,23 +13,22 @@ public class Account {
     @Id
     private Long no;
 
-    private String Name;
+    private String name;
 
-    @Enumerated(EnumType.STRING)
-    private BranchCode branchCode;
+    private String branchCode;
 
     protected Account() {
     }
 
     @Builder
-    private Account(Long no, String name, BranchCode branchCode) {
+    private Account(Long no, String name, String branchCode) {
         this.no = no;
-        Name = name;
+        this.name = name;
         this.branchCode = branchCode;
     }
 
-    private void checkNotNull(Long no, String name, BranchCode branchCode) {
-        if (no == null || name == null || name.isEmpty() || branchCode == null) {
+    private void checkNotNull(Long no, String name, String branchCode) {
+        if (no == null || name == null || name.isEmpty() || branchCode == null || branchCode.isEmpty()) {
             throw new IllegalArgumentException("필수값 누락입니다.");
         }
     }

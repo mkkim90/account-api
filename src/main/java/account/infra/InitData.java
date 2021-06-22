@@ -2,7 +2,6 @@ package account.infra;
 
 import account.model.entity.Account;
 import account.model.entity.AccountHistory;
-import account.model.entity.BranchCode;
 import account.repository.AccountHistoryRepository;
 import account.repository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +47,7 @@ public class InitData {
         List<Account> accountList = Files.readAllLines(resource.getFile().toPath(), StandardCharsets.UTF_8)
                 .stream().skip(1).map(line -> {
                     String[] split = line.split(",");
-                    return Account.builder().no(Long.parseLong(split[0])).name(split[1]).branchCode(BranchCode.of(split[2]))
+                    return Account.builder().no(Long.parseLong(split[0])).name(split[1]).branchCode(split[2])
                             .build();
                 }).collect(Collectors.toList());
         accountRepository.saveAll(accountList);
