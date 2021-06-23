@@ -30,6 +30,11 @@ public class AccountHistoryRepositoryTest {
 
     @BeforeEach
     void uploadAccount() throws IOException{
+        initAccount();
+        initAccountHistory();
+    }
+
+    private void initAccount() throws IOException {
         Resource resource = new ClassPathResource("계좌정보.csv");
         List<Account> accountList = Files.readAllLines(resource.getFile().toPath(), StandardCharsets.UTF_8)
                 .stream().skip(1).map(line -> {
@@ -38,6 +43,16 @@ public class AccountHistoryRepositoryTest {
                             .build();
                 }).collect(Collectors.toList());
         accountRepository.saveAll(accountList);
+    }
+
+    private void initAccountHistory() throws IOException {
+        Resource resource = new ClassPathResource("거래내역.csv");
+        List<AccountHistory> accountHistories = Files.readAllLines(resource.getFile().toPath(), StandardCharsets.UTF_8)
+                .stream().skip(1).map(line -> {
+                    String[] split = line.split(",");
+                    return AccountHistory.buildByUploadCsvFile(split, Account.builder().no(Long.parseLong(split[1])).build());
+                }).collect(Collectors.toList());
+        accountHistoryRepository.saveAll(accountHistories);
     }
 
     /**
@@ -67,12 +82,14 @@ public class AccountHistoryRepositoryTest {
 
     @Test
     void uploadTest() throws IOException {
-        Resource resource = new ClassPathResource("거래내역.csv");
-        List<AccountHistory> accountHistories = Files.readAllLines(resource.getFile().toPath(), StandardCharsets.UTF_8)
-                .stream().skip(1).map(line -> {
-                    String[] split = line.split(",");
-                    return AccountHistory.buildByUploadCsvFile(split, Account.builder().no(Long.parseLong(split[1])).build());
-                }).collect(Collectors.toList());
-        accountHistoryRepository.saveAll(accountHistories);
+        initAccountHistory();
+    }
+
+    @Test
+    void findStaticsByYearAndAccountNo() {
+        List<Object[]> list = accountHistoryRepository.findTotalAmountGroupByYearAndAccountNo();
+        for (Object[] ob : list) {
+            System.out.println(ob);
+        }
     }
 }
