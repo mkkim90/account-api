@@ -1,5 +1,7 @@
 package account.repository;
 
+import account.model.AccountHistoryResult;
+import account.model.dto.AccountHistoryStatics;
 import account.model.entity.Account;
 import account.model.entity.AccountHistory;
 import account.model.entity.CancelStatus;
@@ -14,9 +16,11 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.time.LocalDate;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.maxBy;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
@@ -87,9 +91,13 @@ public class AccountHistoryRepositoryTest {
 
     @Test
     void findStaticsByYearAndAccountNo() {
-        List<Object[]> list = accountHistoryRepository.findTotalAmountGroupByYearAndAccountNo();
-        for (Object[] ob : list) {
-            System.out.println(ob);
+        List<AccountHistoryResult> list = accountHistoryRepository.findTotalAmountGroupByYearAndAccountNo();
+        Map<String, Optional<AccountHistoryResult>> maxTotalAmountGroupByYear = list.stream().collect(groupingBy(AccountHistoryResult::getYear,
+                        TreeMap::new,
+                        maxBy(Comparator.comparingLong(AccountHistoryResult::getTotalAmount))));
+        for (Optional<AccountHistoryResult> op : maxTotalAmountGroupByYear.values()) {
+            System.out.println(op.get().getYear());
+            System.out.println(op.get().getTotalAmount());
         }
     }
 }
