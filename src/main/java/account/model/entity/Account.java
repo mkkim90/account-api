@@ -27,9 +27,4 @@ public class Account {
         this.branchCode = branchCode;
     }
 
-    private void checkNotNull(Long no, String name, String branchCode) {
-        if (no == null || name == null || name.isEmpty() || branchCode == null || branchCode.isEmpty()) {
-            throw new IllegalArgumentException("필수값 누락입니다.");
-        }
-    }
 }

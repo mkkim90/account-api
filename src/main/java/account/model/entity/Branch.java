@@ -1,12 +1,14 @@
 package account.model.entity;
 
+import lombok.EqualsAndHashCode;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
 @Entity
+@EqualsAndHashCode
 public class Branch {
-
     @Id
     private String code;
 

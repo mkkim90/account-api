@@ -1,7 +1,9 @@
 package account.repository;
 
+import account.model.entity.Account;
 import account.model.entity.AccountHistory;
 import account.model.entity.CancelStatus;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -23,15 +25,37 @@ public class AccountHistoryRepositoryTest {
     @Autowired
     private AccountHistoryRepository accountHistoryRepository;
 
+    @Autowired
+    private AccountRepository accountRepository;
+
+    @BeforeEach
+    void uploadAccount() throws IOException{
+        Resource resource = new ClassPathResource("계좌정보.csv");
+        List<Account> accountList = Files.readAllLines(resource.getFile().toPath(), StandardCharsets.UTF_8)
+                .stream().skip(1).map(line -> {
+                    String[] split = line.split(",");
+                    return Account.builder().no(Long.parseLong(split[0])).name(split[1]).branchCode(split[2])
+                            .build();
+                }).collect(Collectors.toList());
+        accountRepository.saveAll(accountList);
+    }
+
     /**
      * 거래일자,계좌번호,거래번호,금액,수수료,취소여부
      * 20180102,11111111,1,1000000,0,N
      */
     @Test
     void create() {
+        Account account = Account.builder()
+                .no(99999999L)
+                .branchCode("A")
+                .name("김철")
+                .build();
+
+        Account savedAccount = accountRepository.save(account);
         AccountHistory accountHistory = AccountHistory.builder()
                 .transactionDate(LocalDate.of(2018,01,02))
-                .accountNo(11111111L)
+                .account(savedAccount)
                 .transactionNo(1L)
                 .price(1000000)
                 .fee(0)
@@ -47,7 +71,7 @@ public class AccountHistoryRepositoryTest {
         List<AccountHistory> accountHistories = Files.readAllLines(resource.getFile().toPath(), StandardCharsets.UTF_8)
                 .stream().skip(1).map(line -> {
                     String[] split = line.split(",");
-                    return AccountHistory.buildByUploadCsvFile(split);
+                    return AccountHistory.buildByUploadCsvFile(split, Account.builder().no(Long.parseLong(split[1])).build());
                 }).collect(Collectors.toList());
         accountHistoryRepository.saveAll(accountHistories);
     }

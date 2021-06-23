@@ -16,8 +16,9 @@ public class AccountHistory {
     @Column(nullable = false)
     private LocalDate transactionDate;
 
-    @Column(nullable = false)
-    private Long accountNo;
+    @ManyToOne
+    @JoinColumn(name = "account_no", nullable = false)
+    private Account account;
 
     @Column(nullable = false)
     private Long transactionNo;
@@ -33,22 +34,22 @@ public class AccountHistory {
     private CancelStatus cancelStatus = CancelStatus.N;
 
     @Builder
-    private AccountHistory(LocalDate transactionDate, Long accountNo, Long transactionNo, long price, long fee, CancelStatus cancelStatus) {
+    private AccountHistory(LocalDate transactionDate, Account account, Long transactionNo, long price, long fee, CancelStatus cancelStatus) {
         this.transactionDate = transactionDate;
-        this.accountNo = accountNo;
+        this.account = account;
         this.transactionNo = transactionNo;
         this.price = price;
         this.fee = fee;
         this.cancelStatus = cancelStatus;
     }
 
-    public static AccountHistory buildByUploadCsvFile(String[] accountHistories) {
-        return new AccountHistory(accountHistories);
+    public static AccountHistory buildByUploadCsvFile(String[] accountHistories, Account account) {
+        return new AccountHistory(accountHistories, account);
     }
 
-    private AccountHistory(String[] accountHistories) {
+    private AccountHistory(String[] accountHistories, Account account) {
         this.transactionDate = convertLocalDate(accountHistories[0]);
-        this.accountNo = convertLong(accountHistories[1]);
+        this.account = account;
         this.transactionNo = convertLong(accountHistories[2]);
         this.price = convertLong(accountHistories[3]);
         this.fee = convertLong(accountHistories[4]);

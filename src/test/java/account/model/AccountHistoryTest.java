@@ -1,5 +1,6 @@
 package account.model;
 
+import account.model.entity.Account;
 import account.model.entity.AccountHistory;
 import account.model.entity.CancelStatus;
 import org.assertj.core.api.Assertions;
@@ -24,7 +25,7 @@ public class AccountHistoryTest {
     @Test
     void create() {
         AccountHistory accountHistory = AccountHistory.builder()
-                .accountNo(11111117L)
+                .account(Account.builder().no(11111117L).build())
                 .transactionNo(1L)
                 .cancelStatus(CancelStatus.valueOf('N'))
                 .price(1_000_000)
@@ -40,7 +41,7 @@ public class AccountHistoryTest {
         List<AccountHistory> accountHistories = Files.readAllLines(resource.getFile().toPath(), StandardCharsets.UTF_8)
                 .stream().skip(1).map(line -> {
                     String[] split = line.split(",");
-                    return AccountHistory.buildByUploadCsvFile(split);
+                    return AccountHistory.buildByUploadCsvFile(split, Account.builder().no(Long.parseLong(split[1])).build());
                 }).collect(Collectors.toList());
         assertThat(accountHistories.size()).isEqualTo(102);
     }
@@ -49,8 +50,9 @@ public class AccountHistoryTest {
     @ParameterizedTest
     @ValueSource(strings={"2018102,11111111,1,1000000,0,N","mkk,11111111,1,1000000,0,N"})
     void validUploadTransactionDateException(String input) {
+        String[] split = input.split(",");
         Assertions.assertThatThrownBy(() -> {
-            AccountHistory.buildByUploadCsvFile(input.split(","));
+            AccountHistory.buildByUploadCsvFile(split, Account.builder().no(Long.parseLong(split[1])).build());
         }).isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -58,8 +60,9 @@ public class AccountHistoryTest {
     @ParameterizedTest
     @ValueSource(strings={"20181002,11111-111,1,1000000,0,N","20200622,11111111,u,1000000,0,N", "20200622,11111111,1,100uui0000,0,N"})
     void validUploadLongParseException(String input) {
+        String[] split = input.split(",");
         Assertions.assertThatThrownBy(() -> {
-            AccountHistory.buildByUploadCsvFile(input.split(","));
+            AccountHistory.buildByUploadCsvFile(split, Account.builder().no(Long.parseLong(split[1])).build());
         }).isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -67,8 +70,9 @@ public class AccountHistoryTest {
     @ParameterizedTest
     @ValueSource(strings={"20181002,11111111,1,1000000,0,X","20200622,11111111,2,1000000,0,I"})
     void validUploadCancelStatusException(String input) {
+        String[] split = input.split(",");
         Assertions.assertThatThrownBy(() -> {
-            AccountHistory.buildByUploadCsvFile(input.split(","));
+            AccountHistory.buildByUploadCsvFile(split, Account.builder().no(Long.parseLong(split[1])).build());
         }).isInstanceOf(IllegalArgumentException.class);
     }
 }
