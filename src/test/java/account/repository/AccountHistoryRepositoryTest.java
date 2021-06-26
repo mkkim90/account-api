@@ -92,12 +92,18 @@ public class AccountHistoryRepositoryTest {
     @Test
     void findStaticsByYearAndAccountNo() {
         List<AccountHistoryResult> list = accountHistoryRepository.findTotalAmountGroupByYearAndAccountNo();
-        Map<String, Optional<AccountHistoryResult>> maxTotalAmountGroupByYear = list.stream().collect(groupingBy(AccountHistoryResult::getYear,
-                        TreeMap::new,
+        Map<String, Optional<AccountHistoryResult>> maxTotalAmountGroupByYear = list.stream()
+                .collect(groupingBy(AccountHistoryResult::getYear, TreeMap::new,
                         maxBy(Comparator.comparingLong(AccountHistoryResult::getTotalAmount))));
-        for (Optional<AccountHistoryResult> op : maxTotalAmountGroupByYear.values()) {
-            System.out.println(op.get().getYear());
-            System.out.println(op.get().getTotalAmount());
-        }
+        assertThat(maxTotalAmountGroupByYear.get("2018").isPresent()).isTrue();
+        assertThat(maxTotalAmountGroupByYear.get("2019").isPresent()).isTrue();
+        assertThat(maxTotalAmountGroupByYear.get("2020").isPresent()).isTrue();
+    }
+
+    @Test
+    void findNotAccountHistoryByYear() {
+        List<AccountHistoryResult> list = accountHistoryRepository.findNotAccountHistoryByYear("2018");
+        List<Long> accountNos = list.stream().map(AccountHistoryResult::getAccountNo).collect(Collectors.toList());
+        assertThat(accountNos).contains(11111115L, 11111118L, 11111121L);
     }
 }
