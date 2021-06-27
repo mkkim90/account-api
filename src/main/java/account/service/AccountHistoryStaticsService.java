@@ -32,7 +32,7 @@ public class AccountHistoryStaticsService {
     }
 
     private List<AccountHistoryStatics> convertMaxAccountHistoryStatic(List<? extends AccountHistoryResult> list) {
-        return list.stream()
+        return list.parallelStream()
                 .collect(groupingBy(AccountHistoryResult::getYear, TreeMap::new,
                         maxBy(Comparator.comparingLong(AccountHistoryResult::getTotalAmount))))
                 .values()
@@ -43,7 +43,7 @@ public class AccountHistoryStaticsService {
 
     public List<AccountStatics> findNotAccountHistoryByYear(List<String> years) {
         return getAccountHistoryResults(years)
-                .stream()
+                .parallelStream()
                 .map(accountHistoryResult -> AccountStatics.of(accountHistoryResult))
                 .collect(Collectors.toList());
     }
