@@ -2,14 +2,17 @@ package account.service;
 
 import account.model.AccountHistoryResult;
 import account.model.dto.AccountHistoryStatics;
+import account.model.dto.AccountStatics;
 import account.repository.AccountHistoryRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.*;
 
@@ -38,6 +41,15 @@ public class AccountHistoryStaticsService {
                 .collect(toList());
     }
 
-
+    public List<AccountStatics> findNotAccountHistoryByYear(List<String> years) {
+        List<AccountHistoryResult> accountHistoryResults = new ArrayList<>();
+        for (String year : years) {
+            accountHistoryResults.addAll(accountHistoryRepository.findNotAccountHistoryByYear(year));
+        }
+        return accountHistoryResults
+                .stream()
+                .map(accountHistoryResult -> AccountStatics.of(accountHistoryResult))
+                .collect(Collectors.toList());
+    }
 
 }
