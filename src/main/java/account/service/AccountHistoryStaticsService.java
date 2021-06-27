@@ -42,14 +42,18 @@ public class AccountHistoryStaticsService {
     }
 
     public List<AccountStatics> findNotAccountHistoryByYear(List<String> years) {
+        return getAccountHistoryResults(years)
+                .stream()
+                .map(accountHistoryResult -> AccountStatics.of(accountHistoryResult))
+                .collect(Collectors.toList());
+    }
+
+    private List<AccountHistoryResult> getAccountHistoryResults(List<String> years) {
         List<AccountHistoryResult> accountHistoryResults = new ArrayList<>();
         for (String year : years) {
             accountHistoryResults.addAll(accountHistoryRepository.findNotAccountHistoryByYear(year));
         }
-        return accountHistoryResults
-                .stream()
-                .map(accountHistoryResult -> AccountStatics.of(accountHistoryResult))
-                .collect(Collectors.toList());
+        return accountHistoryResults;
     }
 
 }
